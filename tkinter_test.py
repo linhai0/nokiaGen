@@ -14,7 +14,7 @@ root.geometry("800x500+100+100")
 root.title("Linhai Node")
 
 font_type = "Consolas"
-font_fav = Font(root, font=((font_type, 20, NORMAL)))
+font_fav = Font(root, font=((font_type, 16, NORMAL)))
 
 def author():
     showinfo("Author", "）——）——）——）——）——）——）——")
@@ -26,12 +26,60 @@ def about():
 filename = ""
 def open_and_save():
     global filename
-    filename = askopenfile(defaultextension=".text")
+    filename = askopenfile(defaultextension='txt')
+    full_filename = filename.name
     if filename is "":
         filename = None
     else:
-        root.title("FileName:" + os.path.basename(filename))
+        print("FileName" + os.path.basename(full_filename))
+        root.title(full_filename)
         textPad.delete(1.0, END)
+        with open(full_filename, 'r', encoding='utf-8') as f:
+            s1 = f.read()
+            print(s1)
+            textPad.insert(1.0, s1)
+            # textPad.insert(1.0, "\n----\n")
+
+def save_file_as():
+    f = asksaveasfilename(initialfile="unTitle.txt", defaultextension="*.txt")
+    global filename
+    filename = f
+
+    msg = textPad.get(1.0, END)
+    with open(filename, 'w', encoding='utf-8') as fff:
+        fff.write(msg)
+    root.title("FileName:" + os.path.basename(filename))
+
+def cut_content():
+    textPad.event_generate("<<Cut>>")
+    textPad.event_generate("<<Copy Paste Redo ...Undo>>")
+
+
+def selectAll():
+    textPad.tag_add('sel', '1.0', END)
+
+def search():
+    top_search = Toplevel(root)
+    top_search.geometry('300x30+200+250')
+    lable1 = Label(top_search, text='Find')
+    lable1.grid(row=0, column=0, padx=5)
+    entry1 = Entry(top_search, width=20)
+    entry1.grid(row=0, column=1, padx=5)
+    button1 = Button(top_search, text="search")
+    button1.grid(row=0, column=2)
+
+
+
+
+def save_file():
+    global filename
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            msg = textPad.get(1.0, END)
+            f.write(msg)
+    except:
+        save_file_as()
+
 
 menubar = Menu(root) # 生成
 root.config(menu = menubar) # 加上
@@ -39,9 +87,9 @@ root.config(menu = menubar) # 加上
 # 建立子菜单
 file_menu = Menu(menubar) # 生成
 file_menu.add_command(label="New file", accelerator="Ctrl + N")
-file_menu.add_command(label="Open file", accelerator="Ctrl + O")
-file_menu.add_command(label="Save file", accelerator="Ctrl + S")
-file_menu.add_command(label="Save file as", accelerator="Ctrl + Shift + S")
+file_menu.add_command(label="Open file", accelerator="Ctrl + O", command=open_and_save)
+file_menu.add_command(label="Save file", accelerator="Ctrl + S", command=save_file)
+file_menu.add_command(label="Save file as", accelerator="Ctrl + Shift + S", command=save_file_as)
 
 menubar.add_cascade(label="File", menu=file_menu) # 加上
 
@@ -63,7 +111,7 @@ about_menu.add_command(label="Copyright", command=about)
 menubar.add_cascade(label="About", menu=about_menu, )
 
 toolbar = Frame(root, height=25, bg="light sea green")
-short_button = Button(toolbar, text="Open", relief=RAISED)
+short_button = Button(toolbar, text="Open", relief=RAISED, command=open_and_save)
 short_button.pack(side="left", padx=5, pady=3)
 
 short_button01 = Button(toolbar, text="Save")
@@ -80,14 +128,15 @@ statusbar.pack(side=BOTTOM, fill=X)
 ln_label = Label(root, width=2, bg="antique white")
 ln_label.pack(side="left", fill="y")
 
+# TODO add New Menu
 
-textPad = Text(root, undo=True, bg="antique white", font=font_fav)
+textPad = Text(root, undo=True, bg="antique white", font=font_fav, padx=0, pady=20)
 textPad.pack(expand=YES, fill=BOTH)
 
 scroll = Scrollbar(textPad, relief=FLAT)
 textPad.config(yscrollcommand=scroll.set)
 scroll.config(command=textPad.yview)
-scroll.pack(side="right", fill='y')
+scroll.pack(side="right", fill='y', padx=0)
 
 if __name__ == '__main__':
     root.mainloop()
