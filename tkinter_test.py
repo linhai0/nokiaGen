@@ -121,24 +121,29 @@ short_button01.pack(side="left", padx=10, pady=6)
 toolbar.pack(expand=NO, fill=X)
 
 statusbar = Label(root, text="LN20", bd=1, relief=RIDGE, anchor='se')
-statusbar.pack(side=BOTTOM, fill=X)
+# statusbar.pack(side=BOTTOM, fill=X)
+statusbar.place(relx=0, rely=0.95, relwidth=0.0975, relheight=0.05)
+
 
 # line number and text
 # input_text = Text(root, width=2, bg="black")
 # input_text.pack(side="left", fill=Y)
 
-ln_label = Label(root, width=2, bg="antique white")
-ln_label.pack(side="left", fill="y")
+ln_label = Label(root, bg="antique white")
+ln_label.place(relx=0, rely=0.1, relwidth=0.025, relheight=0.85)
+# ln_label.pack(side="left", fill="y")
 
 # TODO add New Menu
 
-textPad = Text(root, undo=True, bg="antique white", state='disabled', relief=FLAT, font=font_fav, padx=0, pady=2, highlightbackground="white")
+textPad = Text(root, undo=True, bg="antique white", state='disabled', relief=FLAT, font=font_fav, padx=1, pady=2, highlightbackground="white")
 
 scroll = Scrollbar(root, relief=RIDGE, bg='red', )
 textPad.config(yscrollcommand=scroll.set, state='normal')
 scroll.config(command=textPad.yview)
-scroll.pack(side="right", fill=Y, padx=0)
-textPad.pack( fill=BOTH, side=LEFT)
+scroll.place(relx=0.975, rely=0.1, relwidth=0.025, relheight=0.85)
+# scroll.pack(side="right", fill=Y, padx=0)
+textPad.place(relx=0.025, rely=0.1, relwidth=0.95, relheight=0.85)
+# textPad.pack(expand=True, fill=BOTH, side=LEFT)
 
 
 cv = Canvas(root,bg = 'white')
