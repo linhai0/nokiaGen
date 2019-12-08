@@ -11,6 +11,7 @@ from tkinter.font import *
 
 root = Tk()
 root.geometry("800x500+100+100")
+# root.geometry("800x500+700+400")
 root.title("Linhai Node")
 
 font_type = "Consolas"
@@ -38,6 +39,7 @@ def open_and_save():
             s1 = f.read()
             print(s1)
             textPad.insert(1.0, s1)
+
             # textPad.insert(1.0, "\n----\n")
 
 def save_file_as():
@@ -130,13 +132,17 @@ ln_label.pack(side="left", fill="y")
 
 # TODO add New Menu
 
-textPad = Text(root, undo=True, bg="antique white", font=font_fav, padx=0, pady=20)
-textPad.pack(expand=YES, fill=BOTH)
+textPad = Text(root, undo=True, bg="antique white", state='disabled', relief=FLAT, font=font_fav, padx=0, pady=2, highlightbackground="white")
 
-scroll = Scrollbar(textPad, relief=FLAT)
-textPad.config(yscrollcommand=scroll.set)
+scroll = Scrollbar(root, relief=RIDGE, bg='red', )
+textPad.config(yscrollcommand=scroll.set, state='normal')
 scroll.config(command=textPad.yview)
-scroll.pack(side="right", fill='y', padx=0)
+scroll.pack(side="right", fill=Y, padx=0)
+textPad.pack( fill=BOTH, side=LEFT)
+
+
+cv = Canvas(root,bg = 'white')
+
 
 if __name__ == '__main__':
     root.mainloop()
