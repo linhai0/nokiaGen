@@ -2,6 +2,7 @@ __author__ = "Linhai"
 # -*- encoding: utf8 -*-
 
 from tkinter import *
+import tkinter as tk
 from tkinter.messagebox import *
 # from tkinter.dialog import *
 from tkinter.filedialog import *
@@ -120,7 +121,7 @@ short_button01 = Button(toolbar, text="Save")
 short_button01.pack(side="left", padx=10, pady=6)
 toolbar.pack(expand=NO, fill=X)
 
-statusbar = Label(root, text="LN20", bd=1, relief=RIDGE, anchor='se')
+statusbar = tk.Label(root, text="LN20", bd=1, relief=RIDGE, anchor='se')
 # statusbar.pack(side=BOTTOM, fill=X)
 statusbar.place(relx=0, rely=0.95, relwidth=0.0975, relheight=0.05)
 
@@ -147,6 +148,22 @@ textPad.place(relx=0.025, rely=0.1, relwidth=0.95, relheight=0.85)
 
 
 cv = Canvas(root,bg = 'white')
+
+font_size = 16
+
+def wheel(event):
+    global font_size
+    print(event.delta)
+
+    if event.delta == -1:
+        font_size += 2
+        textPad['font'] = "Arial " + str(font_size)
+    else:
+        font_size -= 2
+        textPad['font'] = "Arial " + str(font_size)
+
+textPad.bind("<Control-MouseWheel>", wheel)
+
 
 
 if __name__ == '__main__':
