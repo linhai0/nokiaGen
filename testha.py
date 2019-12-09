@@ -4,54 +4,46 @@
 #listbox scrollbar
 from random import randint
 from tkinter import *
+from tkinter.ttk import *
+import os
 root = Tk()
-root.title("2 Listbox scolling in sync")
+root.title("REACTOR")
 root.geometry("400x400")
 
-switch = 1
-def scrolllistbox2(event):
-    global switch
-    if switch == 1:
-        listbox2.yview_scroll(int(-4*(event.delta/120)), "units")
-def scrolllistbox1(event):
-    global switch
-    if switch == 1:
-        listbox1.yview_scroll(int(-4*(event.delta/120)), "units")
+keyvar = StringVar()
+value = StringVar()
+ev = []
+global row
+row = 0
+# is_add = True
+def callback(sv, *keys, **kwargs):
+    global row
+    print(sv.get(), keys, "\n", kwargs)
+    if ev[-1][1].get() != "":
+        # if len(ev) > 0: pass
+        row += 1
+        tmpvar = StringVar()
+        tmpvar.trace_add("write", callback=lambda name, index, mode, sv1=tmpvar: callback(sv1))
+        entry = Entry(root, textvariable=tmpvar)
+        entry.grid(row=row, column=0, padx=10, pady=5, sticky="we")
+        ev.append((entry, tmpvar))
+        print(len(ev))
+    elif len(ev) >= 2 and ev[-2][1].get() == "":
+        en1, _ = ev.pop()
+        en1.destroy()
 
-def do_switch():
-    global switch
-    if switch:
-        switch = 0
-        label['text'] = "Not in sync"
-    else:
-        switch = 1
-        label['text'] = "In sync"
+    # elif len(ev) == 1 and ev[-1][1].get() == "":
 
-frame1 = Frame(root)
-frame1.pack(expand=1, fill="both")
-scrollbar = Scrollbar(frame1)
-scrollbar.pack(side=RIGHT, fill=Y)
-listbox1 = Listbox(frame1)
-listbox1.pack(expand=1, fill="both", side="left")
-for i in range(100):
-    rnd = str(randint(1,100))
-    listbox1.insert(END, f"OUR INCOMES day {i}:" + rnd)
-# attach listbox to scrollbar
-listbox1.config(bg = "yellow", yscrollcommand=scrollbar.set)
-listbox1.bind("<MouseWheel>", scrolllistbox2)
 
-listbox2 = Listbox(frame1)
-listbox2.pack(expand=1, fill="both", side="left")
-for i in range(100):
-    rnd = str(randint(1,100))
-    listbox2.insert(END, f"THEIR INCOMES day {i}: " + rnd)
-listbox2.config(bg="cyan",yscrollcommand=scrollbar.set)
-listbox2.bind("<MouseWheel>", scrolllistbox1)
-#scrollbar.config(command=listbox.yview)
-frame2 = Frame(root)
-frame2.pack()
-button = Button(frame2, text= "Sync/unsync", command=do_switch)
-button.pack()
-label = Label(frame2, text = "In sync")
-label.pack()
+
+def callback01(*args, **kwargs):
+    print(args, "---", kwargs)
+
+keyvar.trace_add("write", callback=lambda name, index, mode, sv=keyvar: callback(sv))
+# keyvar.trace_add("unset", callback=callback01)
+entry_left = Entry( root, textvariable=keyvar)
+entry_left.grid(row=0, column=0, padx=10, pady=5, sticky="we")
+ev.append((entry_left, keyvar))
+
+
 root.mainloop()

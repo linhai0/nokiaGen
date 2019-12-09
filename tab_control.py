@@ -2,7 +2,7 @@
 # /usr/bin/
 
 __author__ = "Linhai"
-
+# from tkinter.tix import *
 import urllib3.connection
 from urllib import request
 
@@ -32,44 +32,83 @@ class TabControl(object):
     
     def __init__(self, base_frame):
         self.base_frame = base_frame
-        self.tab1 = self.create_tab("第一页")
-        self.tab2 = self.create_tab("第二页")
-        self.tab3 = self.create_tab("第三页")
-
+        self.tab1 = self.create_tab("第一页", 0)
+        self.tab2 = self.create_tab("第二页", 1)
+        self.tab3 = self.create_tab("第三页", 2)
+        self.padx = 30
+        self.pady = 6
         # header = StringVar()
         self.header = {}
         self.param = {}
         self.body = ""
+        self.entity_list = []
+        self.row = 2
+        self.tab1_initial()
+        self.tab3_initial()
 
-    def tab1(self, add_row=True, current_row=1, _initial=True):
-        if _initial:
-            lable1 = Label(self.base_frame, text="Key")
-            lable2 = Label(self.base_frame, text="Value")
-            lable1.grid(row=0, column=0, padx=10, pady=5)
-            lable2.grid(row=0, column=1, padx=10, pady=5)
-            _initial = False
+    def tab1_initial(self):
 
-        if not add_row:
-            return
-
-        keyvar = StringVar()
-        value = StringVar()
-        entry_left = Entry(self.base_frame, textvariable=keyvar)
-        entry_right = Entry(self.base_frame, textvariable=value)
-        entry_left.grid(row=current_row, columnu=0, padx=10, pady=5)
-        entry_right.grid(row=current_row, columnu=1, padx=10, pady=5)
-
-        def callback_input():
-            x = keyvar.get()
-
-            if x != "":
-                current_row += 1
-                self.tab1(add_row=True, current_row=, _initial=False)
-
-        keyvar.trace("w", callback=callback_input)
+        label1 = Label(self.tab1, text="Key")
+        label2 = Label(self.tab1, text="Value")
+        label1.grid(row=1, column=0, padx=30, pady=5)
+        label2.grid(row=1, column=1, padx=40, pady=5)
+        _initial = False
 
 
-    def create_tab(self, text):
-        tab = ttk.Frame(self.base_frame)
+        key_var = StringVar()
+        value_var = StringVar()
+        key_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.callback(key_var))
+        value_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.callback(value_var))
+        entry_key = Entry(self.tab1, textvariable=key_var)
+        entry_value = Entry(self.tab1, textvariable=value_var)
+        entry_key.grid(row=self.row, column=0, padx=self.padx, pady=self.pady, sticky='e')
+        entry_value.grid(row=self.row, column=1, padx=self.padx, pady=self.pady)
+
+        self.entity_list.append((entry_key, entry_value, key_var, value_var))
+
+
+    def  callback(self, var, *keys, **kwargs):
+        print(var.get(), keys, "\n", kwargs)
+        if self.entity_list[-1][2].get() != "" or self.entity_list[-1][3].get() != "":
+            # if len(ev) > 0: pass
+            self.row += 1
+            key_var   = StringVar()
+            value_var = StringVar()
+            key_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.callback(key_var))
+            value_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.callback(value_var))
+            entry_key   = Entry(self.tab1, textvariable=key_var)
+            entry_value = Entry(self.tab1, textvariable=value_var)
+            entry_key.  grid(row=self.row, column=0, padx=self.padx, pady=self.pady)
+            entry_value.grid(row=self.row, column=1, padx=self.padx, pady=self.pady)
+            self.entity_list.append((entry_key, entry_value, key_var, value_var))
+            print(len(self.entity_list))
+        elif len(self.entity_list) >= 2 and self.entity_list[-2][2].get() == "" and self.entity_list[-2][3].get() == "":
+            entry_tmp_key, entry_tmp_value, _, __  = self.entity_list.pop()
+            entry_tmp_key.destroy()
+            entry_tmp_value.destroy()
+
+
+    def tab3_initial(self):
+        text = Text(self.tab3, undo=True, bg="antique white", state='normal', relief=FLAT,
+                    # width=145, height=120,
+                    font=("Consolas", 12, NORMAL), padx=5, pady=5, highlightbackground="white")
+        text.grid(row=0, column=0)
+        text.config(width=80, height=18)
+        # text.place(relx=0, rely=0, relwidth=1, relheight=1)
+    def create_tab(self, text, number):
+        tab = tk.Frame(self.base_frame)
+        tab.grid(row=0, column=number, padx=15, pady=15, sticky='ew')
         self.base_frame.add(tab, text=text)
+        return tab
+
+
+if __name__ == "__main__":
+    root = Tk()
+
+    root.geometry("500x400")
+    notebook = Notebook(root)
+    notebook.grid(row=0, column=0, padx=10, pady=5, sticky='ew')
+    ccc = TabControl(notebook)
+    root.mainloop()
+
 

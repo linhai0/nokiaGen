@@ -26,7 +26,7 @@ frame_buttom.grid(row=1, column=0, sticky="e")
 frame_base = Frame(root)
 frame_base.grid(row=0)
 
-frame0 = Frame(frame_base, style='My.TFrame')
+frame0 = Frame(frame_base)
 frame0.grid(row=0, column=0, sticky='news')
 
 
@@ -84,12 +84,12 @@ frame11.grid(row=1, column=0, sticky='newe')
 
 # 请求参数选项卡
 frame12 = Frame(frame1, style='My.TFrame')
-frame12.grid(row=2, column=0, sticky='news', columnspan=2)
+frame12.grid(row=2, column=0,  columnspan=2,  pady=50, padx=80, )
 # frame.grid_columnconfigure(1, weight=1)
 # frame.grid_rowconfigure(1, weight=1)
 # 进度条 先不用
 frame13 = Frame(frame1, style='My.TFrame')
-frame13.grid(row=3, column=0, sticky='news', columnspan=2)
+frame13.grid(row=3, column=0,  columnspan=2)
 # response标题
 frame14 = Frame(frame1, style='My.TFrame')
 frame14.grid(row=4, column=0, sticky='news', columnspan=2)
@@ -136,7 +136,6 @@ var1 = entry.get()
 
 
 var2 = StringVar()
-
 request_com = ttk.Combobox(frame11, textvariable=var2, width=8,state='readonly',
                            font=Font(root, font=((font_type, 13, ROMAN))))
 request_com['value'] = ["67890", "POST"]
@@ -144,7 +143,7 @@ request_com['value'] = ["67890", "POST"]
 # var2.set("GET") # == 下一句
 request_com.current(0)
 
-request_com.grid(row=0, column=0, sticky='nwse', padx=10, pady=15)
+request_com.grid(row=0, column=0, sticky='news', padx=10, pady=15)
 
 x0, y0, x1, y1= 0, 0, 40, 40
 cv = Canvas(frame11, height=40, width=40)
@@ -171,24 +170,20 @@ for x in range(50):
 
 style = Style()
 # style.theme_settings('default',{'TFrame':{'configure':{'width':100, 'height':100}}})
-style.configure('My.TFrame', foreground='#334353', background="#476526")
+style.configure('Myf.TFrame', foreground='#334353', background="#476526")
 
 
+style = ttk.Style(root)
+style.configure('lefttab.TNotebook', tabposition='ns')
+base_tab = Notebook(frame12, style='lefttab.TNotebook')
+base_tab.grid(row=0, column=0, padx=10, pady=10, ipady=6)
+tabs = TabControl(base_tab)
 
-base_tab = Notebook(frame12)
-base_tab.grid(row=0, column=0, padx=10, pady=10)
 # notebook.grid_columnconfigure(1, weight=1)
 # notebook.grid_rowconfigure(1, weight=1)
 
 
-# tab1 = ttk.Frame(base_tab)  # Create a tab
-# base_tab.add(tab1, text='第一页')  # Add the tab
 #
-# tab2 = ttk.Frame(base_tab)  # Add a second tab
-# base_tab.add(tab2, text='第二页')  # Make second tab visible
-#
-# tab3 = ttk.Frame(base_tab)  # Add a third tab
-# base_tab.add(tab3, text='第三页')
 #
 # # header = StringVar()
 # header = {}
@@ -198,18 +193,17 @@ base_tab.grid(row=0, column=0, padx=10, pady=10)
 # tab_param(tab2, param)
 # tab_body(tab3, body, header)
 
-tabs = TabControl(base_tab)
 
 
 
 
 
 
-ttk.Button(frame12, text='test', style='My.TButton').grid(column=1, row=0)
-ttk.Button(frame12, text='Test 2', style='My.TButton').grid(column=1, row=1)
-
-text1 = Text(frame12, width=10, height=10)
-text1.grid(row=1, column=0)
+# ttk.Button(frame12, text='test', style='My.TButton').grid(column=1, row=0)
+# ttk.Button(frame12, text='Test 2', style='My.TButton').grid(column=1, row=1)
+#
+# text1 = Text(frame12, width=10, height=10)
+# text1.grid(row=1, column=0)
 
 
 
