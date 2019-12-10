@@ -42,31 +42,35 @@ class TabControl(object):
         self.param = {}
         self.body = ""
         self.entity_list = []
-        self.row = 2
-        self.tab1_initial()
+        self.row = 1
+        self.tab1_initial_and_callback()
         self.tab3_initial()
 
-    def tab1_initial(self):
+    def tab1_initial_and_callback(self, var=None, *keys, **kwargs):
+        if len(self.entity_list) == 0:
+            label1 = Label(self.tab1, text="Key")
+            label2 = Label(self.tab1, text="Value")
+            label1.grid(row=1, column=0, padx=30, pady=5)
+            label2.grid(row=1, column=1, padx=40, pady=5)
+        if len(self.entity_list) == 0 or self.entity_list[-1][2].get() != "" or self.entity_list[-1][3].get() != "":
+            self.row += 1
+            key_var = StringVar()
+            value_var = StringVar()
+            key_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.tab1_initial_and_callback(key_var))
+            value_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.tab1_initial_and_callback(value_var))
+            entry_key = Entry(self.tab1, textvariable=key_var)
+            entry_value = Entry(self.tab1, textvariable=value_var)
+            entry_key.grid(row=self.row, column=0, padx=self.padx, pady=self.pady, sticky='e')
+            entry_value.grid(row=self.row, column=1, padx=self.padx, pady=self.pady)
 
-        label1 = Label(self.tab1, text="Key")
-        label2 = Label(self.tab1, text="Value")
-        label1.grid(row=1, column=0, padx=30, pady=5)
-        label2.grid(row=1, column=1, padx=40, pady=5)
-        _initial = False
+            self.entity_list.append((entry_key, entry_value, key_var, value_var))
 
+        elif len(self.entity_list) >= 2 and self.entity_list[-2][2].get() == "" and self.entity_list[-2][3].get() == "":
+            entry_tmp_key, entry_tmp_value, _, __  = self.entity_list.pop()
+            entry_tmp_key.destroy()
+            entry_tmp_value.destroy()
 
-        key_var = StringVar()
-        value_var = StringVar()
-        key_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.callback(key_var))
-        value_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.callback(value_var))
-        entry_key = Entry(self.tab1, textvariable=key_var)
-        entry_value = Entry(self.tab1, textvariable=value_var)
-        entry_key.grid(row=self.row, column=0, padx=self.padx, pady=self.pady, sticky='e')
-        entry_value.grid(row=self.row, column=1, padx=self.padx, pady=self.pady)
-
-        self.entity_list.append((entry_key, entry_value, key_var, value_var))
-
-
+    """
     def  callback(self, var, *keys, **kwargs):
         print(var.get(), keys, "\n", kwargs)
         if self.entity_list[-1][2].get() != "" or self.entity_list[-1][3].get() != "":
@@ -86,7 +90,7 @@ class TabControl(object):
             entry_tmp_key, entry_tmp_value, _, __  = self.entity_list.pop()
             entry_tmp_key.destroy()
             entry_tmp_value.destroy()
-
+    """
 
     def tab3_initial(self):
         text = Text(self.tab3, undo=True, bg="antique white", state='normal', relief=FLAT,
@@ -105,7 +109,7 @@ class TabControl(object):
 if __name__ == "__main__":
     root = Tk()
 
-    root.geometry("500x400")
+    root.geometry("1080x800")
     notebook = Notebook(root)
     notebook.grid(row=0, column=0, padx=10, pady=5, sticky='ew')
     ccc = TabControl(notebook)

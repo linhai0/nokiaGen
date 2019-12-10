@@ -17,7 +17,10 @@ from tab_control import *
 
 root = Tk()
 
-root.geometry("1180x900+100+100")
+root.geometry("1250x900")
+# Style(root).theme_use('default') # ('aqua', 'clam', 'alt', 'default', 'classic')
+
+print(ttk.Style().layout("TNotebook"))
 
 # 最底下一拦 显示整体状态
 frame_buttom = Frame(root)
@@ -51,7 +54,7 @@ frame2.grid(row=0, column=2, sticky="ne")
 listbox02= Listbox(frame2)
 listbox02.configure(height=10)
 listbox02.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
-listbox02.configure(width=30)
+listbox02.configure(width=10)
 for x in ['Python', 'Kotlin', 'Swift', 'Ruby']:
             listbox02.insert(END, x)
 
@@ -173,14 +176,16 @@ style = Style()
 style.configure('Myf.TFrame', foreground='#334353', background="#476526")
 
 
-style = ttk.Style(root)
-style.configure('lefttab.TNotebook', tabposition='ns')
-base_tab = Notebook(frame12, style='lefttab.TNotebook')
+
+# style.configure('lefttab.TNotebook', tabposition='ns')
+base_tab = Notebook(frame12, )
+
 base_tab.grid(row=0, column=0, padx=10, pady=10, ipady=6)
 tabs = TabControl(base_tab)
 
 # notebook.grid_columnconfigure(1, weight=1)
 # notebook.grid_rowconfigure(1, weight=1)
+
 
 
 #
