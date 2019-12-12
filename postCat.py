@@ -44,12 +44,12 @@ for x in range(20):
     b.grid(row=x + 1, column=0 )
 
 # 中间一大片
-frame1 = Frame(frame_base, style='My.TFrame')
-frame1.grid(row=0, column=1, sticky='news')
+frame1 = Frame(frame_base)
+frame1.grid(row=0, column=1, )
 
 # 右边一大列
-frame2 = Frame(frame_base, style="My.TFrame")
-frame2.grid(row=0, column=2, sticky="ne")
+frame2 = Frame(frame_base, )
+frame2.grid(row=0, column=2)
 
 listbox02= Listbox(frame2)
 listbox02.configure(height=10)
@@ -74,31 +74,35 @@ statusbar1.grid(row=0, column=1, sticky="s")
 # # statusbar.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 
 # 最上面
-frame10 = Frame(frame1, style='My.TFrame')
-frame10.grid(row=0, column=0, sticky='news')
+frame10 = Frame(frame1, )
+frame10.grid(row=0, column=0, )
 
 
 
 # url
-frame11 = Frame(frame1, style='My.TFrame')
+frame11 = Frame(frame1, )
 frame11.grid(row=1, column=0, sticky='newe')
 
 
 
 # 请求参数选项卡
-frame12 = Frame(frame1, style='My.TFrame')
+frame12 = Frame(frame1)
 frame12.grid(row=2, column=0,  columnspan=2,  pady=50, padx=80, )
 # frame.grid_columnconfigure(1, weight=1)
 # frame.grid_rowconfigure(1, weight=1)
 # 进度条 先不用
-frame13 = Frame(frame1, style='My.TFrame')
+frame13 = Frame(frame1, )
 frame13.grid(row=3, column=0,  columnspan=2)
 # response标题
-frame14 = Frame(frame1, style='My.TFrame')
-frame14.grid(row=4, column=0, sticky='news', columnspan=2)
+frame14 = Frame(frame1, )
+frame14.grid(row=4, column=0,  sticky='W', )
+# frame14.configure(foreground="#748734")
 # response状态
-frame15 = Frame(frame1, style='My.TFrame')
-frame15.grid(row=5, column=0, sticky='news', columnspan=2)
+frame15 = Frame(frame1)
+frame15.grid(row=5, column=0,  sticky="w")
+
+response_frame = Frame(frame11)
+response_frame.grid(row=6, column=0, sticky="news")
 
 
 var1 = StringVar()
@@ -171,10 +175,6 @@ pro_bar.grid(row=0, column=0, sticky='news', padx=10, pady=10)
 for x in range(50):
     var3.set(x)
 
-style = Style()
-# style.theme_settings('default',{'TFrame':{'configure':{'width':100, 'height':100}}})
-style.configure('Myf.TFrame', foreground='#334353', background="#476526")
-
 
 
 # style.configure('lefttab.TNotebook', tabposition='ns')
@@ -186,31 +186,23 @@ tabs = TabControl(base_tab)
 # notebook.grid_columnconfigure(1, weight=1)
 # notebook.grid_rowconfigure(1, weight=1)
 
+res_button = Label(frame14, text="response", foreground='green')
+res_button.grid(row=0, column=0, sticky="news", padx=10)
 
+# 相应 进度条
+res_process_var = IntVar()
+res_process_bar = Progressbar(frame14, value=0, variable=res_process_var)
+res_process_bar.grid(row=0, column=1, sticky="e", )
+res_process_var.set(20)
 
 #
-#
-# # header = StringVar()
-# header = {}
-# param = {}
-# body = {}
-# tab_header(tab1, header)
-# tab_param(tab2, param)
-# tab_body(tab3, body, header)
+status_label = Label(frame14, text="Status: ")
+status_label.grid(row=1, column=1, sticky="w", padx=10)
 
-
-
-
-
-
-
-# ttk.Button(frame12, text='test', style='My.TButton').grid(column=1, row=0)
-# ttk.Button(frame12, text='Test 2', style='My.TButton').grid(column=1, row=1)
-#
-# text1 = Text(frame12, width=10, height=10)
-# text1.grid(row=1, column=0)
-
-
+response_var = StringVar()
+status_string = Label(frame14, textvariable=response_var)
+status_string.grid(row=1, column=2, sticky="w", padx=10)
+response_var.set("0------0")
 
 
 
