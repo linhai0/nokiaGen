@@ -2,7 +2,8 @@ __author__ = "Linhai"
 
 import urllib3.connection
 from urllib import request
-
+import threading
+import time
 from tkinter import *
 import tkinter as tk
 from tkinter.messagebox import *
@@ -18,9 +19,8 @@ from tab_control import *
 root = Tk()
 
 root.geometry("1250x900")
-# Style(root).theme_use('default') # ('aqua', 'clam', 'alt', 'default', 'classic')
-
-print(ttk.Style().layout("TNotebook"))
+# Style().theme_use('vista') # ('aqua', 'clam', 'alt', 'default', 'classic')
+# ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
 
 # 最底下一拦 显示整体状态
 frame_buttom = Frame(root)
@@ -135,8 +135,6 @@ entry.focus()
 
 # 先用frame划分 很牛皮！！！
 
-entry.configure()
-var1 = entry.get()
 # Entry(root).grid(row=10, column=5)
 # Label(root, text="First", width=50, height=20).grid(row=1, column=10, )
 # Label(root, text="Second").grid(row=2, column=10, sticky=E, columnspan=10)
@@ -158,7 +156,32 @@ cv.grid(row=0, column=2)
 cv.create_arc(x0+10, y0+10, x1+10, y1+10, start=0, extent=180)  #创建一个扇形
 line = cv.create_line(x0, y0, x1, y1)
 
-send_but = Button(cv,  )
+def r(a, b, c):
+    for _ in range(20):
+        for x in range(100):
+            print("-", a, end="|\n")
+            entry.delete(0, END)
+            entry.insert(0, a[0] + str(x))
+            var3.set(100-x)
+            time.sleep(0.003)
+
+def r1(a, b, c):
+    for _ in range(20):
+        for x in range(100):
+            print("*", end="!\n")
+            res_process_var.set(x)
+            time.sleep(0.03)
+
+def send_request():
+    tmp = var1.get()
+    t1 = threading.Thread(target=r, args=(tmp, 2, 3))
+    t2 = threading.Thread(target=r1, args=(1, 2, 3))
+    t1.setDaemon(True)
+    t2.setDaemon(True)
+    t1.start()
+    t2.start()
+
+send_but = Button(cv,  text="Send", command=send_request)
 send_but.grid(row=0, column=1)
 
 def moveit(rect): # 参数，目标组件
@@ -176,9 +199,13 @@ for x in range(50):
     var3.set(x)
 
 
-
 # style.configure('lefttab.TNotebook', tabposition='ns')
+# style.configure('TNotebook.tabposition', 'w')
+# style.configure('TNotebook.Tab', font=('URW Gothic L','11','bold') )
 base_tab = Notebook(frame12, )
+
+print(ttk.Style(base_tab).layout("TNotebook"))
+
 
 base_tab.grid(row=0, column=0, padx=10, pady=10, ipady=6)
 tabs = TabControl(base_tab)
@@ -203,6 +230,9 @@ response_var = StringVar()
 status_string = Label(frame14, textvariable=response_var)
 status_string.grid(row=1, column=2, sticky="w", padx=10)
 response_var.set("0------0")
+
+
+
 
 
 
