@@ -172,6 +172,8 @@ def r1(a, b, c):
             res_process_var.set(x)
             time.sleep(0.03)
 
+
+
 def send_request():
     tmp = var1.get()
     t1 = threading.Thread(target=r, args=(tmp, 2, 3))
@@ -180,6 +182,77 @@ def send_request():
     t2.setDaemon(True)
     t1.start()
     t2.start()
+
+class ___(object):
+
+    def __init__(self, process_bar, method, url, headers, data, json):
+        self.process_bar = process_bar
+        self.method = method
+        self.url = url
+        self.headers = headers
+        self.data = data
+        self.json = json
+        self.request_status = "sending"
+
+
+    def send_request(self):
+        if self.request_status is "sending":
+            self.t1 = threading.Thread(target=r, args=(self.process_bar))
+            self.t2 = threading.Thread(target=r1, args=(self.method, self.url, self.headers, self.data, self.json))
+            self.t1.setDaemon(True)
+            self.t2.setDaemon(True)
+            self.t1.start()
+            self.t2.start()
+            self.request_status = "cancal"
+        else:
+            self.t1._stop()
+            self.t2._stop()
+
+
+import threading
+import time
+import inspect
+import ctypes
+
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
+
+
+class TestThread(threading.Thread):
+    def run(self):
+        print
+        "begin"
+        while True:
+            time.sleep(0.1)
+        print
+        "end"
+
+
+if __name__ == "__main__":
+    t = TestThread()
+    t.start()
+    time.sleep(1)
+    stop_thread(t)
+    print
+    "stoped"
+
+
 
 send_but = Button(cv,  text="Send", command=send_request)
 send_but.grid(row=0, column=1)
