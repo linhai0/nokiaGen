@@ -92,12 +92,24 @@ class TabControl(object):
             entry_tmp_value.destroy()
     """
 
+    def get_headers(self):
+        result = {}
+        for _, _, key, value in self.entity_list:
+            if key.get().strip() == "":
+                continue
+            else:
+                result[key.get().strip()] = value.get()
+        return  result
+
+    def get_body(self):
+        return self.body.get(1.0, 'end')
+
     def tab3_initial(self):
-        text = Text(self.tab3, undo=True, bg="antique white", state='normal', relief=FLAT,
+        self.body = Text(self.tab3, undo=True, bg="antique white", state='normal', relief=FLAT,
                     # width=145, height=120,
                     font=("Consolas", 12, NORMAL), padx=5, pady=5, highlightbackground="white")
-        text.grid(row=0, column=0)
-        text.config(width=80, height=18)
+        self.body.grid(row=0, column=0)
+        self.body.config(width=80, height=18)
         # text.place(relx=0, rely=0, relwidth=1, relheight=1)
     def create_tab(self, text, number):
         tab = tk.Frame(self.base_frame)

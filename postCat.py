@@ -105,8 +105,19 @@ response_frame = Frame(frame11)
 response_frame.grid(row=6, column=0, sticky="news")
 
 
-var1 = StringVar()
-var1.set("HHHH")
+url_var = StringVar()
+url_var.set("HHHH")
+method_var = StringVar()
+process_var = StringVar()
+send_cancal = StringVar()
+response_var = StringVar()
+res_process_var = IntVar()
+headers = {}
+body = {}
+
+
+
+
 
 # cv = Canvas(root, background='white')
 # cv.grid(row=0, column=0, rowspan=700, columnspan=1)
@@ -115,7 +126,7 @@ var1.set("HHHH")
 font_type = "Consolas"
 font_fav = Font(frame11, font=((font_type, 16, NORMAL)))
 
-entry = Entry(frame11, textvariable=var1, text="Open", show=None,
+entry = Entry(frame11, textvariable=url_var, text="Open", show=None,
               background='#DDDED4',
               width=50, font=font_fav,
               foreground="#874387")
@@ -130,7 +141,7 @@ entry.grid(row=0, column=1, sticky='nwse', padx=10, pady=15)
 # scroll01.config(command=entry.xview)
 # scroll01.grid(row=1, sticky='ne', padx=10, pady=10)
 
-entry.insert(0, var1.get())
+entry.insert(0, url_var.get())
 entry.focus()
 
 # 先用frame划分 很牛皮！！！
@@ -140,8 +151,7 @@ entry.focus()
 # Label(root, text="Second").grid(row=2, column=10, sticky=E, columnspan=10)
 
 
-var2 = StringVar()
-request_com = ttk.Combobox(frame11, textvariable=var2, width=8,state='readonly',
+request_com = ttk.Combobox(frame11, textvariable=method_var, width=8, state='readonly',
                            font=Font(root, font=((font_type, 13, ROMAN))))
 request_com['value'] = ["67890", "POST"]
 # request_com.set("GET") == 下一句
@@ -162,7 +172,7 @@ def r(a, b, c):
             print("-", a, end="|\n")
             entry.delete(0, END)
             entry.insert(0, a[0] + str(x))
-            var3.set(100-x)
+            process_var.set(100 - x)
             time.sleep(0.003)
 
 def r1(a, b, c):
@@ -175,7 +185,7 @@ def r1(a, b, c):
 
 
 def send_request():
-    tmp = var1.get()
+    tmp = url_var.get()
     t1 = threading.Thread(target=r, args=(tmp, 2, 3))
     t2 = threading.Thread(target=r1, args=(1, 2, 3))
     t1.setDaemon(True)
@@ -183,30 +193,57 @@ def send_request():
     t1.start()
     t2.start()
 
-class ___(object):
+class SendRequest(object):
 
-    def __init__(self, process_bar, method, url, headers, data, json):
+    def __init__(self, button_status, process_bar, method, url, base_data):
         self.process_bar = process_bar
         self.method = method
         self.url = url
-        self.headers = headers
-        self.data = data
-        self.json = json
-        self.request_status = "sending"
+        self.base_data = base_data
+        self.button_status = button_status
 
 
-    def send_request(self):
-        if self.request_status is "sending":
-            self.t1 = threading.Thread(target=r, args=(self.process_bar))
-            self.t2 = threading.Thread(target=r1, args=(self.method, self.url, self.headers, self.data, self.json))
+    def handler(self):
+        print(self.button_status.get())
+        if self.button_status.get() == "Send":
+            self.button_status.set("Cancal")
+            self.t1 = threading.Thread(target=self.process_step, args=(self.process_bar, ))
+            self.t2 = threading.Thread(target=self.send_request, args=(self.method, self.url,
+                                                        self.base_data, self.button_status))
             self.t1.setDaemon(True)
             self.t2.setDaemon(True)
             self.t1.start()
             self.t2.start()
-            self.request_status = "cancal"
         else:
-            self.t1._stop()
-            self.t2._stop()
+            _async_raise(self.t1.ident, SystemExit)
+            _async_raise(self.t2.ident, SystemExit)
+            # self.t1._stop()
+            # self.t2._stop()
+            self.process_bar.set(0)
+            self.button_status.set("Send")
+
+    def process_step(self, process_bar):
+        while True:
+            for x in range(0, 101, 2):
+                print(x)
+                if self.button_status.get() == "Cancal":
+                    process_bar.set(x)
+                    time.sleep(0.02)
+                    continue
+                else:
+                    process_bar.set(100)
+                    break
+            if self.button_status.get() == "Send":
+                break
+
+
+    def send_request(self, method, url, base_data, button_status):
+        print(method.get(), url.get(), base_data.get_headers(), base_data.get_body(), button_status.get())
+        for x in range(10):
+            time.sleep(0.3)
+            print("---")
+        button_status.set("Send")
+
 
 
 import threading
@@ -234,28 +271,7 @@ def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
 
 
-class TestThread(threading.Thread):
-    def run(self):
-        print
-        "begin"
-        while True:
-            time.sleep(0.1)
-        print
-        "end"
 
-
-if __name__ == "__main__":
-    t = TestThread()
-    t.start()
-    time.sleep(1)
-    stop_thread(t)
-    print
-    "stoped"
-
-
-
-send_but = Button(cv,  text="Send", command=send_request)
-send_but.grid(row=0, column=1)
 
 def moveit(rect): # 参数，目标组件
     cv.move(rect, 0, 2)
@@ -265,11 +281,10 @@ def moveit(rect): # 参数，目标组件
 # sp01.grid(row=0, column=2)
 
 
-var3 = StringVar()
-pro_bar = Progressbar(frame13, variable=var3)
+pro_bar = Progressbar(frame13, variable=process_var)
 pro_bar.grid(row=0, column=0, sticky='news', padx=10, pady=10)
 for x in range(50):
-    var3.set(x)
+    process_var.set(x)
 
 
 # style.configure('lefttab.TNotebook', tabposition='ns')
@@ -283,6 +298,12 @@ print(ttk.Style(base_tab).layout("TNotebook"))
 base_tab.grid(row=0, column=0, padx=10, pady=10, ipady=6)
 tabs = TabControl(base_tab)
 
+sendor = SendRequest(send_cancal, res_process_var, method_var, url_var, tabs)
+send_but = Button(cv,  text="Send", textvariable=send_cancal , command=sendor.handler)
+send_but.grid(row=0, column=1)
+send_cancal.set("Send")
+
+
 # notebook.grid_columnconfigure(1, weight=1)
 # notebook.grid_rowconfigure(1, weight=1)
 
@@ -290,7 +311,6 @@ res_button = Label(frame14, text="response", foreground='green')
 res_button.grid(row=0, column=0, sticky="news", padx=10)
 
 # 相应 进度条
-res_process_var = IntVar()
 res_process_bar = Progressbar(frame14, value=0, variable=res_process_var)
 res_process_bar.grid(row=0, column=1, sticky="e", )
 res_process_var.set(20)
@@ -299,7 +319,6 @@ res_process_var.set(20)
 status_label = Label(frame14, text="Status: ")
 status_label.grid(row=1, column=1, sticky="w", padx=10)
 
-response_var = StringVar()
 status_string = Label(frame14, textvariable=response_var)
 status_string.grid(row=1, column=2, sticky="w", padx=10)
 response_var.set("0------0")
