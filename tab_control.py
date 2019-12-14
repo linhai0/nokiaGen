@@ -48,14 +48,16 @@ class TabControl(object):
 
     def tab1_initial_and_callback(self, var=None, *keys, **kwargs):
         if len(self.entity_list) == 0:
+            # label3 = Label(self.tab1, text="    ", )
+            # label4 = Label(self.tab1, text="    ", )
+            # label3.grid(row=1, column=0, padx=20, pady=20, )
+            # label4.grid(row=1, column=3, padx=5, pady=5)
+
             label1 = Label(self.tab1, text="Key", )
             label2 = Label(self.tab1, text="Value", )
-            label1.grid(row=1, column=0, padx=5, pady=5,)
-            label2.grid(row=1, column=1, padx=5, pady=5)
-            label3 = Label(self.tab1, text="    ", )
-            label4 = Label(self.tab1, text="    ", )
-            label3.grid(row=1, column=0, padx=5, pady=5, )
-            label4.grid(row=1, column=1, padx=5, pady=5)
+            label1.grid(row=0, column=0, padx=5, pady=5)
+            label2.grid(row=0, column=1, padx=5, pady=5)
+
         if len(self.entity_list) == 0 or self.entity_list[-1][2].get() != "" or self.entity_list[-1][3].get() != "":
             self.row += 1
             key_var = StringVar()

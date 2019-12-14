@@ -98,6 +98,9 @@ frame13.grid(row=3, column=0,  columnspan=2)
 # response标题
 frame14 = Frame(frame1, )
 frame14.grid(row=4, column=0,  sticky='W', )
+frame14.rowconfigure(0, weight=1)
+frame14.columnconfigure(0, weight=1)
+
 # frame14.configure(foreground="#748734")
 # response状态
 frame15 = Frame(frame1)
@@ -118,6 +121,10 @@ process_var = StringVar()
 send_cancal = StringVar()
 response_var = StringVar()
 res_process_var = IntVar()
+res_status_code = StringVar()
+res_headers = StringVar()
+res_body = StringVar()
+res_origin = StringVar()
 headers = {}
 body = {}
 
@@ -186,21 +193,25 @@ def send_request():
 
 class SendRequest(object):
 
-    def __init__(self, button_status, process_bar, method, url, base_data):
+    def __init__(self, button_status, process_bar, method, url, base_data,
+                 status_code, res_headers, res_body, res_origin):
         self.process_bar = process_bar
         self.method = method
         self.url = url
         self.base_data = base_data
         self.button_status = button_status
+        self.status_code = status_code
+        self.res_headers = res_headers
+        self.res_body = res_body
+        self.res_origin = res_origin
 
 
     def handler(self):
         print(self.button_status.get())
         if self.button_status.get() == "Send":
             self.button_status.set("Cancal")
-            self.t1 = threading.Thread(target=self.process_step, args=(self.process_bar, ))
-            self.t2 = threading.Thread(target=self.send_request, args=(self.method, self.url,
-                                                        self.base_data, self.button_status))
+            self.t1 = threading.Thread(target=self.process_step, )
+            self.t2 = threading.Thread(target=self.send_request, )
             self.t1.setDaemon(True)
             self.t2.setDaemon(True)
             self.t1.start()
@@ -213,27 +224,27 @@ class SendRequest(object):
             self.process_bar.set(0)
             self.button_status.set("Send")
 
-    def process_step(self, process_bar):
+    def process_step(self):
         while True:
             for x in range(0, 101, 2):
                 print(x)
                 if self.button_status.get() == "Cancal":
-                    process_bar.set(x)
+                    self.process_bar.set(x)
                     time.sleep(0.02)
                     continue
                 else:
-                    process_bar.set(100)
+                    self.process_bar.set(100)
                     break
             if self.button_status.get() == "Send":
                 break
 
 
-    def send_request(self, method, url, base_data, button_status):
-        print(method.get(), url.get(), base_data.get_headers(), base_data.get_body(), button_status.get())
+    def send_request(self):
+        print(self.method.get(), self.url.get(), self.base_data.get_headers(), self.base_data.get_body(), self.button_status.get())
         for x in range(10):
             time.sleep(0.3)
             print("---")
-        button_status.set("Send")
+        self.button_status.set("Send")
 
 
 
@@ -282,7 +293,8 @@ base_tab = Notebook(frame11, )
 base_tab.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky='news')
 tabs = TabControl(base_tab)
 
-sendor = SendRequest(send_cancal, res_process_var, method_var, url_var, tabs)
+sendor = SendRequest(send_cancal, res_process_var, method_var, url_var, tabs,
+                     res_status_code, res_headers, res_body, res_origin)
 send_but = Button(cv,  text="Send", textvariable=send_cancal , command=sendor.handler)
 send_but.grid(row=0, column=1)
 send_cancal.set("Send")
@@ -303,9 +315,21 @@ res_process_var.set(20)
 status_label = Label(frame14, text="Status: ")
 status_label.grid(row=1, column=1, sticky="w", padx=10)
 
-status_string = Label(frame14, textvariable=response_var)
+status_string = Label(frame14, textvariable=res_status_code)
 status_string.grid(row=1, column=2, sticky="w", padx=10)
-response_var.set("0------0")
+res_status_code.set("0------0")
+
+res_body_button = Button(frame15, text="body",)
+res_body_button.grid(row=0, column=0, sticky='news')
+
+res_headers_button = Button(frame15, text="headers")
+res_headers_button.grid(row=0, column=1, sticky='news')
+
+res_origin_button = Button(frame15, text="headers")
+res_origin_button.grid(row=0, column=2, sticky='news')
+
+# TODO button控制tab！！！
+
 
 
 
