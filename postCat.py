@@ -13,6 +13,8 @@ import os
 from tkinter.font import *
 import tkinter.ttk as ttk
 from tkinter.ttk import *
+import inspect
+import ctypes
 
 from tab_control import *
 
@@ -21,7 +23,7 @@ root = Tk()
 root.geometry("1250x900")
 # Style().theme_use('vista') # ('aqua', 'clam', 'alt', 'default', 'classic')
 # ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
-
+root.rowconfigure(0,weight=1);root.columnconfigure(0,weight=1)
 # 最底下一拦 显示整体状态
 frame_buttom = Frame(root)
 frame_buttom.grid(row=1, column=0, sticky="e")
@@ -45,15 +47,15 @@ for x in range(20):
 
 # 中间一大片
 frame1 = Frame(frame_base)
-frame1.grid(row=0, column=1, )
+frame1.grid(row=0, column=1, sticky='news')
 
 # 右边一大列
 frame2 = Frame(frame_base, )
-frame2.grid(row=0, column=2)
+frame2.grid(row=0, column=2, sticky='news')
 
 listbox02= Listbox(frame2)
 listbox02.configure(height=10)
-listbox02.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
+listbox02.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 listbox02.configure(width=10)
 for x in ['Python', 'Kotlin', 'Swift', 'Ruby']:
             listbox02.insert(END, x)
@@ -87,7 +89,7 @@ frame11.grid(row=1, column=0, sticky='newe')
 
 # 请求参数选项卡
 frame12 = Frame(frame1)
-frame12.grid(row=2, column=0,  columnspan=2,  pady=50, padx=80, )
+frame12.grid(row=2, column=0,  columnspan=2,  sticky='news')
 # frame.grid_columnconfigure(1, weight=1)
 # frame.grid_rowconfigure(1, weight=1)
 # 进度条 先不用
@@ -99,7 +101,11 @@ frame14.grid(row=4, column=0,  sticky='W', )
 # frame14.configure(foreground="#748734")
 # response状态
 frame15 = Frame(frame1)
-frame15.grid(row=5, column=0,  sticky="w")
+frame15.grid(row=5, column=0,  sticky="news")
+
+b1test = Button(frame15, text="jjjj")
+b1test.grid(sticky='e')
+
 
 response_frame = Frame(frame11)
 response_frame.grid(row=6, column=0, sticky="news")
@@ -166,21 +172,6 @@ cv.grid(row=0, column=2)
 cv.create_arc(x0+10, y0+10, x1+10, y1+10, start=0, extent=180)  #创建一个扇形
 line = cv.create_line(x0, y0, x1, y1)
 
-def r(a, b, c):
-    for _ in range(20):
-        for x in range(100):
-            print("-", a, end="|\n")
-            entry.delete(0, END)
-            entry.insert(0, a[0] + str(x))
-            process_var.set(100 - x)
-            time.sleep(0.003)
-
-def r1(a, b, c):
-    for _ in range(20):
-        for x in range(100):
-            print("*", end="!\n")
-            res_process_var.set(x)
-            time.sleep(0.03)
 
 
 
@@ -246,10 +237,7 @@ class SendRequest(object):
 
 
 
-import threading
-import time
-import inspect
-import ctypes
+
 
 
 def _async_raise(tid, exctype):
@@ -281,21 +269,17 @@ def moveit(rect): # 参数，目标组件
 # sp01.grid(row=0, column=2)
 
 
-pro_bar = Progressbar(frame13, variable=process_var)
-pro_bar.grid(row=0, column=0, sticky='news', padx=10, pady=10)
-for x in range(50):
-    process_var.set(x)
+# frame13还没使用
+
+
 
 
 # style.configure('lefttab.TNotebook', tabposition='ns')
 # style.configure('TNotebook.tabposition', 'w')
 # style.configure('TNotebook.Tab', font=('URW Gothic L','11','bold') )
-base_tab = Notebook(frame12, )
+base_tab = Notebook(frame11, )
 
-print(ttk.Style(base_tab).layout("TNotebook"))
-
-
-base_tab.grid(row=0, column=0, padx=10, pady=10, ipady=6)
+base_tab.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky='news')
 tabs = TabControl(base_tab)
 
 sendor = SendRequest(send_cancal, res_process_var, method_var, url_var, tabs)

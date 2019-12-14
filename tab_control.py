@@ -32,10 +32,10 @@ class TabControl(object):
     
     def __init__(self, base_frame):
         self.base_frame = base_frame
-        self.tab1 = self.create_tab("第一页", 0)
+        self.tab1 = self.create_tab("第一页", 0, expand=False)
         self.tab2 = self.create_tab("第二页", 1)
         self.tab3 = self.create_tab("第三页", 2)
-        self.padx = 30
+        self.padx = 5
         self.pady = 6
         # header = StringVar()
         self.header = {}
@@ -48,20 +48,26 @@ class TabControl(object):
 
     def tab1_initial_and_callback(self, var=None, *keys, **kwargs):
         if len(self.entity_list) == 0:
-            label1 = Label(self.tab1, text="Key")
-            label2 = Label(self.tab1, text="Value")
-            label1.grid(row=1, column=0, padx=30, pady=5)
-            label2.grid(row=1, column=1, padx=40, pady=5)
+            label1 = Label(self.tab1, text="Key", )
+            label2 = Label(self.tab1, text="Value", )
+            label1.grid(row=1, column=0, padx=5, pady=5,)
+            label2.grid(row=1, column=1, padx=5, pady=5)
+            label3 = Label(self.tab1, text="    ", )
+            label4 = Label(self.tab1, text="    ", )
+            label3.grid(row=1, column=0, padx=5, pady=5, )
+            label4.grid(row=1, column=1, padx=5, pady=5)
         if len(self.entity_list) == 0 or self.entity_list[-1][2].get() != "" or self.entity_list[-1][3].get() != "":
             self.row += 1
             key_var = StringVar()
             value_var = StringVar()
             key_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.tab1_initial_and_callback(key_var))
             value_var.trace_add("write", callback=lambda name, index, mode, var=key_var: self.tab1_initial_and_callback(value_var))
+            temp_frame = Frame(self.tab1)
+            temp_frame.grid(row=self.row, column=0)
             entry_key = Entry(self.tab1, textvariable=key_var)
             entry_value = Entry(self.tab1, textvariable=value_var)
-            entry_key.grid(row=self.row, column=0, padx=self.padx, pady=self.pady, sticky='e')
-            entry_value.grid(row=self.row, column=1, padx=self.padx, pady=self.pady)
+            entry_key.grid(row=self.row, column=0, padx=self.padx, pady=self.pady, sticky='ew')
+            entry_value.grid(row=self.row, column=1, padx=self.padx, pady=self.pady, sticky='ew')
 
             self.entity_list.append((entry_key, entry_value, key_var, value_var))
 
@@ -108,12 +114,15 @@ class TabControl(object):
         self.body = Text(self.tab3, undo=True, bg="antique white", state='normal', relief=FLAT,
                     # width=145, height=120,
                     font=("Consolas", 12, NORMAL), padx=5, pady=5, highlightbackground="white")
-        self.body.grid(row=0, column=0)
-        self.body.config(width=80, height=18)
+        self.body.grid(row=0, column=0, sticky='news')
+        # self.body.config(width=80, height=18)
         # text.place(relx=0, rely=0, relwidth=1, relheight=1)
-    def create_tab(self, text, number):
+    def create_tab(self, text, number, expand=True):
         tab = tk.Frame(self.base_frame)
-        tab.grid(row=0, column=number, padx=15, pady=15, sticky='ew')
+        if expand:
+            tab.rowconfigure(0, weight=1)
+            tab.columnconfigure(0, weight=1)
+        tab.grid( padx=5, pady=5, sticky='news')
         self.base_frame.add(tab, text=text)
         return tab
 
